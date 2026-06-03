@@ -1,50 +1,54 @@
 export const lightColors = {
   background: {
-    primary: '#F8FAFC',
-    secondary: '#F1F5F9',
-    card: '#FFFFFF',
+    primary:   '#FDFAF6',  // warm cream
+    secondary: '#F5EFE6',  // slightly deeper cream
+    card:      '#FFFFFF',
   },
   text: {
-    primary: '#0F172A',
-    secondary: '#475569',
-    muted: '#94A3B8',
+    primary:   '#1A1410',  // near-black, warm
+    secondary: '#6B5E50',  // warm brown-grey
+    muted:     '#A0948A',  // muted warm
   },
   accent: {
-    primary: '#06B6D4',
+    primary: '#9A7450',    // deep beige — enough contrast on cream
   },
   status: {
-    success: '#22C55E',
-    danger: '#EF4444',
-    warning: '#F59E0B',
+    success: '#4A9B6F',
+    danger:  '#C05050',
+    warning: '#B07820',
   },
-  border: '#E2E8F0',
-  badge: '#EF4444',
+  border: '#E8E0D4',       // warm border
+  badge:  '#C05050',
 };
 
 export const darkColors = {
   background: {
-    primary: '#0A0F1E',
-    secondary: '#131929',
-    card: '#1A2235',
+    primary:   '#0D0B08',  // black with a breath of beige
+    secondary: '#151210',  // warm surface
+    card:      '#1C1916',  // warm card
   },
   text: {
-    primary: '#F1F5F9',
-    secondary: '#94A3B8',
-    muted: '#475569',
+    primary:   '#F0EAE0',  // warm off-white
+    secondary: '#8A7E72',  // warm grey
+    muted:     '#504844',  // very muted
   },
   accent: {
-    primary: '#22D3EE',
+    primary: '#C9A87C',    // warm beige
   },
   status: {
-    success: '#4ADE80',
-    danger: '#F87171',
-    warning: '#FCD34D',
+    success: '#7DB87A',    // muted sage green
+    danger:  '#C47A7A',    // muted terracotta red
+    warning: '#C4A054',    // muted amber (close to beige)
   },
-  border: '#1E2D45',
-  badge: '#F87171',
+  border: '#222222',       // barely-there separator
+  badge:  '#C47A7A',
 };
 
 export const typography = {
+  fonts: {
+    retro: 'VT323-Regular',  // pixel terminal font — use for display/headings
+    system: undefined,        // falls back to system font
+  },
   sizes: {
     xs: 10,
     sm: 12,
@@ -77,26 +81,26 @@ export const spacing = {
 };
 
 export const borderRadius = {
-  sm: 4,
-  md: 8,
-  lg: 16,
+  sm: 0,   // square
+  md: 2,   // nearly square
+  lg: 4,   // subtle — used only on large containers
   full: 9999,
 };
 
 export const shadows = {
   card: {
-    elevation: 2,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.08,
-    shadowRadius: 4,
+    elevation: 3,
+    shadowColor: '#C9A87C',  // accent-tinted hard shadow
+    shadowOffset: { width: 3, height: 3 },
+    shadowOpacity: 0.18,
+    shadowRadius: 0,
   },
   elevated: {
     elevation: 6,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.12,
-    shadowRadius: 8,
+    shadowColor: '#C9A87C',
+    shadowOffset: { width: 4, height: 4 },
+    shadowOpacity: 0.22,
+    shadowRadius: 0,
   },
 };
 

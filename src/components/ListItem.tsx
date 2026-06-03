@@ -11,17 +11,10 @@ interface ListItemProps {
   onPress?: () => void;
   showDivider?: boolean;
   style?: ViewStyle;
+  active?: boolean;
 }
 
-export function ListItem({
-  leftIcon,
-  title,
-  subtitle,
-  rightElement,
-  onPress,
-  showDivider = false,
-  style,
-}: ListItemProps) {
+export function ListItem({ leftIcon, title, subtitle, rightElement, onPress, showDivider = false, style, active = false }: ListItemProps) {
   const { theme } = useTheme();
   const { colors, spacing } = theme;
 
@@ -34,16 +27,16 @@ export function ListItem({
           paddingVertical: spacing.md,
           paddingHorizontal: spacing.md,
           backgroundColor: colors.background.card,
+          // Left accent stripe when active
+          ...(active && {
+            borderLeftWidth: 3,
+            borderLeftColor: colors.accent.primary,
+          }),
         },
-        showDivider && {
-          borderBottomWidth: 1,
-          borderBottomColor: colors.border,
-        },
+        showDivider && { borderBottomWidth: 1, borderBottomColor: colors.border },
         style,
       ]}>
-      {leftIcon ? (
-        <View style={{ marginRight: spacing.md }}>{leftIcon}</View>
-      ) : null}
+      {leftIcon ? <View style={{ marginRight: spacing.md }}>{leftIcon}</View> : null}
       <View style={{ flex: 1 }}>
         <Text variant="body">{title}</Text>
         {subtitle ? (
@@ -52,15 +45,13 @@ export function ListItem({
           </Text>
         ) : null}
       </View>
-      {rightElement ? (
-        <View style={{ marginLeft: spacing.sm }}>{rightElement}</View>
-      ) : null}
+      {rightElement ? <View style={{ marginLeft: spacing.sm }}>{rightElement}</View> : null}
     </View>
   );
 
   if (onPress) {
     return (
-      <TouchableOpacity activeOpacity={0.7} onPress={onPress}>
+      <TouchableOpacity activeOpacity={0.6} onPress={onPress}>
         {inner}
       </TouchableOpacity>
     );

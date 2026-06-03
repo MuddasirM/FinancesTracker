@@ -12,7 +12,7 @@ export function BiometricLockScreen() {
   const navigation = useNavigation<RootStackNavProp>();
 
   const handleUnlock = () => {
-    navigation.replace('Home');
+    navigation.replace('Main');
   };
 
   return (

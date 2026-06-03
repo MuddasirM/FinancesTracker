@@ -1,22 +1,23 @@
 import React from 'react';
 import { View, ScrollView, ViewStyle, StatusBar } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaView, Edge } from 'react-native-safe-area-context';
 import { useTheme } from '../theme/useTheme';
 
 interface ScreenProps {
   children: React.ReactNode;
   style?: ViewStyle;
   contentStyle?: ViewStyle;
+  edges?: Edge[];
 }
 
-export function Screen({ children, style, contentStyle }: ScreenProps) {
+export function Screen({ children, style, contentStyle, edges = ['top', 'left', 'right'] }: ScreenProps) {
   const { theme } = useTheme();
   const { colors } = theme;
 
   return (
     <SafeAreaView
       style={[{ flex: 1, backgroundColor: colors.background.primary }, style]}
-      edges={['top', 'left', 'right']}>
+      edges={edges}>
       <StatusBar
         barStyle={theme.isDark ? 'light-content' : 'dark-content'}
         backgroundColor={colors.background.primary}
@@ -26,14 +27,14 @@ export function Screen({ children, style, contentStyle }: ScreenProps) {
   );
 }
 
-export function ScrollScreen({ children, style, contentStyle }: ScreenProps) {
+export function ScrollScreen({ children, style, contentStyle, edges = ['top', 'left', 'right'] }: ScreenProps) {
   const { theme } = useTheme();
   const { colors } = theme;
 
   return (
     <SafeAreaView
       style={[{ flex: 1, backgroundColor: colors.background.primary }, style]}
-      edges={['top', 'left', 'right']}>
+      edges={edges}>
       <StatusBar
         barStyle={theme.isDark ? 'light-content' : 'dark-content'}
         backgroundColor={colors.background.primary}

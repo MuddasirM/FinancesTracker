@@ -34,23 +34,23 @@ export function Button({
 }: ButtonProps) {
   const { theme } = useTheme();
   const { colors, spacing, borderRadius, typography } = theme;
-  const scale = useRef(new Animated.Value(1)).current;
+
+  // Retro press-down effect: button shifts 2px on press, shadow collapses
+  const translate = useRef(new Animated.Value(0)).current;
 
   const handlePressIn = () => {
-    Animated.spring(scale, {
-      toValue: 0.96,
+    Animated.timing(translate, {
+      toValue: 2,
+      duration: 60,
       useNativeDriver: true,
-      speed: 30,
-      bounciness: 0,
     }).start();
   };
 
   const handlePressOut = () => {
-    Animated.spring(scale, {
-      toValue: 1,
+    Animated.timing(translate, {
+      toValue: 0,
+      duration: 100,
       useNativeDriver: true,
-      speed: 30,
-      bounciness: 4,
     }).start();
   };
 
@@ -61,27 +61,53 @@ export function Button({
     borderRadius: borderRadius.md,
     paddingVertical: spacing.sm + 4,
     paddingHorizontal: spacing.lg,
-    ...(variant === 'primary' && { backgroundColor: colors.accent.primary }),
-    ...(variant === 'secondary' && {
-      backgroundColor: 'transparent',
-      borderWidth: 1.5,
+    borderWidth: 1,
+    ...(variant === 'primary' && {
+      backgroundColor: colors.accent.primary,
       borderColor: colors.accent.primary,
     }),
-    ...(variant === 'ghost' && { backgroundColor: 'transparent' }),
-    ...(variant === 'danger' && { backgroundColor: colors.status.danger }),
-    ...(disabled && { opacity: 0.5 }),
+    ...(variant === 'secondary' && {
+      backgroundColor: 'transparent',
+      borderColor: colors.accent.primary,
+    }),
+    ...(variant === 'ghost' && {
+      backgroundColor: 'transparent',
+      borderColor: 'transparent',
+    }),
+    ...(variant === 'danger' && {
+      backgroundColor: colors.status.danger,
+      borderColor: colors.status.danger,
+    }),
+    ...(disabled && { opacity: 0.4 }),
     ...(fullWidth && { alignSelf: 'stretch' }),
   };
 
   const textColor =
     variant === 'primary' || variant === 'danger'
-      ? '#FFFFFF'
+      ? colors.background.primary
       : variant === 'secondary'
       ? colors.accent.primary
       : colors.text.secondary;
 
+  // Hard offset shadow wrapper (primary only)
+  const shadowStyle: ViewStyle =
+    variant === 'primary' && !disabled
+      ? {
+          shadowColor: colors.accent.primary,
+          shadowOffset: { width: 3, height: 3 },
+          shadowOpacity: 0.35,
+          shadowRadius: 0,
+          elevation: 4,
+        }
+      : {};
+
   return (
-    <Animated.View style={[{ transform: [{ scale }] }, style]}>
+    <Animated.View
+      style={[
+        shadowStyle,
+        { transform: [{ translateX: translate }, { translateY: translate }] },
+        style,
+      ]}>
       <TouchableOpacity
         activeOpacity={1}
         onPress={onPress}
@@ -93,14 +119,14 @@ export function Button({
           <ActivityIndicator size="small" color={textColor} />
         ) : (
           <>
-            {icon && (
-              <View style={{ marginRight: spacing.xs }}>{icon}</View>
-            )}
+            {icon && <View style={{ marginRight: spacing.xs }}>{icon}</View>}
             <Text
               style={{
-                fontSize: typography.sizes.base,
-                fontWeight: typography.weights.semibold,
+                fontFamily: 'VT323-Regular',
+                fontSize: 18,
                 color: textColor,
+                letterSpacing: 1.5,
+                textTransform: 'uppercase',
               }}>
               {label}
             </Text>

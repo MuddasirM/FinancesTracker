@@ -9,40 +9,49 @@ interface TextProps extends RNTextProps {
   color?: string;
 }
 
+const FONT = 'VT323-Regular';
+
 export function Text({ variant = 'body', color, style, ...props }: TextProps) {
   const { theme } = useTheme();
   const { typography, colors } = theme;
 
   const variantStyles: Record<Variant, TextStyle> = {
     heading: {
-      fontSize: typography.sizes.xl,
-      fontWeight: typography.weights.bold,
+      fontFamily: FONT,
+      fontSize: 32,
       color: colors.text.primary,
-      lineHeight: typography.sizes.xl * typography.lineHeights.tight,
+      letterSpacing: 1.5,
+      lineHeight: 36,
     },
     subheading: {
-      fontSize: typography.sizes.lg,
-      fontWeight: typography.weights.semibold,
+      fontFamily: FONT,
+      fontSize: 24,
       color: colors.text.primary,
-      lineHeight: typography.sizes.lg * typography.lineHeights.tight,
+      letterSpacing: 1,
+      lineHeight: 28,
     },
     body: {
-      fontSize: typography.sizes.base,
-      fontWeight: typography.weights.regular,
+      fontFamily: FONT,
+      fontSize: 18,
       color: colors.text.primary,
-      lineHeight: typography.sizes.base * typography.lineHeights.normal,
+      letterSpacing: 0.5,
+      lineHeight: 24,
     },
     caption: {
-      fontSize: typography.sizes.sm,
-      fontWeight: typography.weights.regular,
+      fontFamily: FONT,
+      fontSize: 14,
       color: colors.text.muted,
-      lineHeight: typography.sizes.sm * typography.lineHeights.normal,
+      letterSpacing: 1.2,
+      textTransform: 'uppercase',
+      lineHeight: 18,
     },
     label: {
-      fontSize: typography.sizes.sm,
-      fontWeight: typography.weights.medium,
+      fontFamily: FONT,
+      fontSize: 14,
       color: colors.text.secondary,
-      lineHeight: typography.sizes.sm * typography.lineHeights.normal,
+      letterSpacing: 1.5,
+      textTransform: 'uppercase',
+      lineHeight: 18,
     },
   };
 

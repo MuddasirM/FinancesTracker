@@ -32,12 +32,12 @@ export function Input({
     ? colors.accent.primary
     : colors.border;
 
+  const borderWidth = focused || error ? 2 : 1;
+
   return (
     <View style={[{ marginBottom: spacing.md }, containerStyle]}>
       {label && (
-        <Text
-          variant="label"
-          style={{ marginBottom: spacing.xs }}>
+        <Text variant="label" style={{ marginBottom: spacing.sm }}>
           {label}
         </Text>
       )}
@@ -45,23 +45,29 @@ export function Input({
         style={{
           flexDirection: 'row',
           alignItems: 'center',
-          borderWidth: 1.5,
+          borderWidth,
           borderColor,
           borderRadius: borderRadius.md,
           backgroundColor: colors.background.card,
           paddingHorizontal: spacing.md,
+          // Left accent stripe on focus
+          ...(focused && !error && {
+            borderLeftWidth: 3,
+            borderLeftColor: colors.accent.primary,
+          }),
         }}>
         {leftIcon && (
-          <View style={{ marginRight: spacing.xs }}>{leftIcon}</View>
+          <View style={{ marginRight: spacing.sm }}>{leftIcon}</View>
         )}
         <TextInput
           style={[
             {
               flex: 1,
-              paddingVertical: large ? spacing.md : spacing.sm + 2,
+              paddingVertical: large ? spacing.md : spacing.sm + 4,
               fontSize: large ? typography.sizes.xxl : typography.sizes.base,
               fontWeight: large ? typography.weights.bold : typography.weights.regular,
               color: colors.text.primary,
+              fontVariant: ['tabular-nums'],
             },
             style,
           ]}
@@ -71,13 +77,13 @@ export function Input({
           {...props}
         />
         {rightIcon && (
-          <View style={{ marginLeft: spacing.xs }}>{rightIcon}</View>
+          <View style={{ marginLeft: spacing.sm }}>{rightIcon}</View>
         )}
       </View>
       {error ? (
         <Text
           variant="caption"
-          style={{ color: colors.status.danger, marginTop: spacing.xs }}>
+          style={{ color: colors.status.danger, marginTop: spacing.xs, letterSpacing: 0.5 }}>
           {error}
         </Text>
       ) : null}
