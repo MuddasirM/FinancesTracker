@@ -5,6 +5,7 @@ import { RootStackParamList } from './types';
 import { useTheme } from '../theme/useTheme';
 import { BiometricLockScreen } from '../screens/BiometricLock';
 import { SettingsScreen } from '../screens/Settings';
+import { CategoryScreen } from '../screens/Settings/CategoryScreen';
 import { MainNavigator } from './MainNavigator';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -19,9 +20,10 @@ export function RootNavigator() {
   return (
     <NavigationContainer theme={navTheme}>
       <Stack.Navigator initialRouteName="BiometricLock" screenOptions={{ headerShown: false }}>
-        <Stack.Screen name="BiometricLock" component={BiometricLockScreen} />
-        <Stack.Screen name="Main"          component={MainNavigator} />
-        <Stack.Screen name="Settings"      component={SettingsScreen} />
+        <Stack.Screen name="BiometricLock"    component={BiometricLockScreen} />
+        <Stack.Screen name="Main"             component={MainNavigator} />
+        <Stack.Screen name="Settings"         component={SettingsScreen} />
+        <Stack.Screen name="SettingsCategory" component={CategoryScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );

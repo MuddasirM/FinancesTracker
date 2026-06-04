@@ -33,7 +33,7 @@ export function Button({
   fullWidth = false,
 }: ButtonProps) {
   const { theme } = useTheme();
-  const { colors, spacing, borderRadius, typography } = theme;
+  const { colors, spacing, borderRadius } = theme;
 
   // Retro press-down effect: button shifts 2px on press, shadow collapses
   const translate = useRef(new Animated.Value(0)).current;
@@ -122,7 +122,6 @@ export function Button({
             {icon && <View style={{ marginRight: spacing.xs }}>{icon}</View>}
             <Text
               style={{
-                fontFamily: 'VT323-Regular',
                 fontSize: 18,
                 color: textColor,
                 letterSpacing: 1.5,

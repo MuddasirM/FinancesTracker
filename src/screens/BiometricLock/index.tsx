@@ -36,13 +36,15 @@ export function BiometricLockScreen() {
           style={{
             width: 72,
             height: 72,
-            borderRadius: 20,
-            backgroundColor: colors.accent.primary,
+            borderRadius: 4,
+            borderWidth: 1,
+            borderColor: colors.accent.primary,
+            backgroundColor: colors.accent.primary + '18',
             alignItems: 'center',
             justifyContent: 'center',
             marginBottom: spacing.lg,
           }}>
-          <Icon name="chart-line" size={38} color="#FFFFFF" />
+          <Icon name="safe-square-outline" size={38} color={colors.accent.primary} />
         </View>
         <Text
           style={{
@@ -51,10 +53,10 @@ export function BiometricLockScreen() {
             color: colors.text.primary,
             letterSpacing: -0.5,
           }}>
-          FinanceTracker
+          Coffer
         </Text>
         <Text variant="caption" style={{ marginTop: spacing.xs }}>
-          Your money, your way
+          My Money, My Coffer
         </Text>
       </View>
 

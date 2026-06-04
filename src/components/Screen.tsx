@@ -2,6 +2,7 @@ import React from 'react';
 import { View, ScrollView, ViewStyle, StatusBar } from 'react-native';
 import { SafeAreaView, Edge } from 'react-native-safe-area-context';
 import { useTheme } from '../theme/useTheme';
+import { ScanlineOverlay } from './ScanlineOverlay';
 
 interface ScreenProps {
   children: React.ReactNode;
@@ -23,6 +24,7 @@ export function Screen({ children, style, contentStyle, edges = ['top', 'left', 
         backgroundColor={colors.background.primary}
       />
       <View style={[{ flex: 1 }, contentStyle]}>{children}</View>
+      <ScanlineOverlay />
     </SafeAreaView>
   );
 }
@@ -46,6 +48,7 @@ export function ScrollScreen({ children, style, contentStyle, edges = ['top', 'l
         keyboardShouldPersistTaps="handled">
         {children}
       </ScrollView>
+      <ScanlineOverlay />
     </SafeAreaView>
   );
 }

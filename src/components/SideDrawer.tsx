@@ -103,7 +103,7 @@ export function SideDrawer({ visible, onClose, activeRoute, onNavigate }: SideDr
           borderBottomColor: colors.border,
         }}>
           <View style={{ borderWidth: 1, borderColor: colors.accent.primary, alignSelf: 'flex-start', paddingHorizontal: spacing.sm + 4, paddingVertical: 2 }}>
-            <Text style={{ fontSize: 22, color: colors.accent.primary, letterSpacing: 4 }}>FINTRACK</Text>
+            <Text style={{ fontSize: 22, color: colors.accent.primary, letterSpacing: 4 }}>COFFER</Text>
           </View>
           <Text variant="caption" style={{ marginTop: spacing.xs }}>Personal Finance</Text>
         </View>

@@ -9,3 +9,4 @@ export { EmptyState } from './EmptyState';
 export { Badge } from './Badge';
 export { Header } from './Header';
 export { FAB } from './FAB';
+export { CategoryButton } from './CategoryButton';

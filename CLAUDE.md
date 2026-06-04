@@ -5,9 +5,10 @@
 ## Dev
 
 ```powershell
-npm run android   # start Metro + adb reverse + build + install + launch (one command)
-npm test          # jest
-npm run lint      # eslint
+npm run android          # start Metro + adb reverse + build + install + launch (dev, hot-reload)
+npm run android:release  # build release APK (JS bundled inside) + install + launch — no Metro needed
+npm test                 # jest
+npm run lint             # eslint
 ```
 
 Rebuilding is only required when: adding native assets (fonts, images), changing android/ files, or installing new packages with native modules. JS/TS changes hot-reload automatically.
@@ -19,9 +20,10 @@ Rebuilding is only required when: adding native assets (fonts, images), changing
 | Layer | Library |
 |---|---|
 | Framework | React Native 0.85 (New Architecture) |
-| Navigation | React Navigation 7 — native stack + (bottom tabs reserved) |
+| Navigation | React Navigation 7 — native stack + bottom tabs |
 | Gestures | react-native-gesture-handler + reanimated 4 |
 | Storage | @react-native-async-storage/async-storage |
+| Database | react-native-quick-sqlite (JSI, synchronous + async) |
 | Icons | react-native-vector-icons / MaterialCommunityIcons |
 | Font | VT323-Regular (retro pixel font — used on **all** text) |
 
@@ -31,6 +33,14 @@ Rebuilding is only required when: adding native assets (fonts, images), changing
 
 ```
 src/
+  db/
+    database.ts           # initDatabase(), getDatabase() — call initDatabase() once on app launch
+    schema.ts             # CREATE TABLE constants; ALL_TABLES = [accounts, categories] only — settings tables managed by migration
+    types.ts              # SettingCategory, Setting, SettingsScreenData, Account, Category + input types
+    repositories/
+      settingsRepository.ts    # getCategories / getCategoryWithSettings / getAllSettingsGrouped / getSetting / getSettingValue<T> / setSetting (editable guard) / resetSetting / resetAllSettings
+      accountsRepository.ts    # getAccounts / getAccountById / getAccountByIdentifier / createAccount / updateAccount / archiveAccount
+      categoriesRepository.ts  # getCategories / getCategoryById / createCategory / updateCategory / archiveCategory
   theme/
     index.ts          # color tokens, typography, spacing, shadows, borderRadius
     ThemeContext.tsx   # ThemeProvider, useTheme hook source, persists mode to AsyncStorage
@@ -38,12 +48,15 @@ src/
   components/         # shared UI primitives (see below)
   navigation/
     RootNavigator.tsx  # top-level NavigationContainer + stack
-    types.ts           # RootStackParamList + screen prop types
+    MainNavigator.tsx  # tab navigator, drawer state, tab↔stack routing (TAB_ROUTES set)
+    types.ts           # RootStackParamList, TabParamList, screen prop types (incl. ExpensesScreenProps)
   screens/
     BiometricLock/     # lock screen, navigates → Main on unlock
     Home/              # tab: dashboard — balance, stats, category spend breakdown
     Expenses/          # tab: full transaction list grouped by date, FAB to add
-    Settings/          # root stack screen — opened from SideDrawer, has back button
+    Settings/
+      index.tsx          # terminal header + 2-col CategoryButton grid; loads from getCategories()
+      CategoryScreen.tsx # loads via getCategoryWithSettings(); rows driven by input_type from DB
 android/
   app/src/main/assets/fonts/   # VT323-Regular.ttf lives here
 ```
@@ -73,6 +86,32 @@ Default theme mode is `'dark'` (set in ThemeContext). User preference is persist
 
 ---
 
+## Database
+
+SQLite via `react-native-quick-sqlite`. DB file: `finance_tracker.db`.
+
+**Init:** call `initDatabase()` once at app startup (e.g. in `App.tsx`) before rendering any screen that uses repositories. It is idempotent — safe to call multiple times.
+
+**Usage pattern:**
+```ts
+import { initDatabase } from './src/db/database'
+import { getCategories } from './src/db/repositories/categoriesRepository'
+
+// In App.tsx — already wired. dbReady gate prevents render until DB is open.
+await initDatabase()
+
+// Then anywhere:
+const categories = await getCategories()
+```
+
+**Models:** `SettingCategory`, `Setting`, `SettingsScreenData`, `Account`, `Category` — all in `src/db/types.ts`.  
+**Settings schema:** two tables — `settings_categories` (6 rows) + `settings` (rich schema with `input_type`, `data_type`, `options`, `description`). Migration detects old schema by checking for `settings_categories` existence; drops `settings` and recreates both tables on first run.  
+**Timestamps:** unix ms (`Date.now()`).  
+**Soft deletes:** `is_active = 0` via `archiveAccount` / `archiveCategory`. Active filter must be applied at call site if needed.  
+**`archiveCategory(id, reassignTo?)`:** `reassignTo` is wired for future use when a `transactions` table exists; currently only sets `is_active = 0`.
+
+---
+
 ## Components
 
 All in `src/components/`. All consume theme via `useTheme()`.
@@ -91,6 +130,8 @@ All in `src/components/`. All consume theme via `useTheme()`.
 | `ListItem` | `title, subtitle, leftIcon, rightElement, onPress, showDivider, active` | `active` adds left accent stripe |
 | `Header` | `title, onBack, rightAction, rightElement, borderless` | 2px bottom border, uppercase spaced title |
 | `FAB` | `onPress, iconName, bottom, right` | Square, beige hard shadow, press-down animation |
+| `CategoryRow` | `icon, label, value, total, color, onPress?` | VT block-fill budget bar + icon + spend/budget amounts. `onPress` wraps in TouchableOpacity and shows chevron |
+| `CategoryButton` | `label, icon, size, onPress` | Square card for Settings grid; Reanimated CRT flicker animation (scale + opacity + border flash) on press before navigation |
 | `BottomSheet` | `visible, onDismiss, snapHeight, scrollable` | Accent top border, animated slide-up |
 | `EmptyState` | `icon, title, subtitle, ctaLabel, onCta` | Uppercase title, decorative beige rule |
 
@@ -107,16 +148,21 @@ RootStack (initialRoute: BiometricLock)
       Home
       Expenses
     SideDrawer    (overlay, opened by hamburger)
-  Settings        → full screen, back button via Header
+  Settings        → category list, back button via Header
+  SettingsCategory → detail screen for one category (param: categoryKey: CategoryKey)
 ```
 
 **AppTopBar** (`src/components/AppTopBar.tsx`): fixed header rendered by `MainNavigator` above the tab navigator — shared by all tab screens. Left = hamburger → opens SideDrawer. Centre = `FINTRACK` wordmark. Right = bell.  
-**SideDrawer** (`src/components/SideDrawer.tsx`): left-slide overlay. Nav items: Home, Expenses. Settings section: Settings, Help. Settings lives in the drawer, not a tab.  
-**Bottom tab bar:** Home (`home-outline`) + Expenses (`receipt-text`). Retro style: 2px accent bar at top of active tab, VT323 labels. Tab navigation is captured via `tabNavRef` in `MainNavigator` and shared with the drawer.  
+**SideDrawer** (`src/components/SideDrawer.tsx`): left-slide overlay. Nav items: Home, Expenses. Settings section: Settings only. Tab routes use `tabNavRef`; non-tab routes (Settings) go through root stack via `rootNav.navigate()`.  
+**Bottom tab bar:** Home (`home-outline`) + Expenses (`receipt`). Retro style: 2px accent bar at top of active tab, VT323 labels. Tab navigation captured via `tabNavRef` in `MainNavigator`.  
 **Tab screens** must use `<Screen edges={['bottom', 'left', 'right']}>` — top safe area is handled by AppTopBar.
 
-To add a **tab screen**: (1) create screen (use `edges={['bottom','left','right']}`), (2) add to `TabParamList` in `types.ts`, (3) add to `TAB_CONFIG` + `<Tab.Screen>` in `MainNavigator.tsx`, (4) add to `NAV_ITEMS` in `SideDrawer.tsx`.  
-To add a **stack screen** (modal etc): (1) create screen, (2) add to `RootStackParamList` in `types.ts`, (3) add `<Stack.Screen>` in `RootNavigator.tsx`.
+To add a **tab screen**: (1) create screen (use `edges={['bottom','left','right']}`), (2) add to `TabParamList` in `types.ts`, (3) add to `TAB_CONFIG`, `TAB_ROUTES`, and `<Tab.Screen>` in `MainNavigator.tsx`, (4) add to `NAV_ITEMS` in `SideDrawer.tsx`.  
+To add a **stack screen**: (1) create screen, (2) add to `RootStackParamList` in `types.ts`, (3) add `<Stack.Screen>` in `RootNavigator.tsx`.
+
+**Home screen local components:**  
+- `StatsRow` — inline component rendering Income / Expenses / Saved stats. No props; reads constants directly.  
+- `ExpensesScreen` reads `route.params?.category` via `useRoute` — currently used for the header label; filter logic to be added later.
 
 ---
 

@@ -27,7 +27,6 @@ export function ListItem({ leftIcon, title, subtitle, rightElement, onPress, sho
           paddingVertical: spacing.md,
           paddingHorizontal: spacing.md,
           backgroundColor: colors.background.card,
-          // Left accent stripe when active
           ...(active && {
             borderLeftWidth: 3,
             borderLeftColor: colors.accent.primary,
@@ -49,13 +48,7 @@ export function ListItem({ leftIcon, title, subtitle, rightElement, onPress, sho
     </View>
   );
 
-  if (onPress) {
-    return (
-      <TouchableOpacity activeOpacity={0.6} onPress={onPress}>
-        {inner}
-      </TouchableOpacity>
-    );
-  }
-
-  return inner;
+  return onPress ? (
+    <TouchableOpacity activeOpacity={0.6} onPress={onPress}>{inner}</TouchableOpacity>
+  ) : inner;
 }

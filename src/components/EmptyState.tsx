@@ -35,7 +35,6 @@ export function EmptyState({ icon, title, subtitle, ctaLabel, onCta, style }: Em
       <Text
         style={{
           textAlign: 'center',
-          fontFamily: 'VT323-Regular',
           fontSize: 22,
           color: colors.text.primary,
           letterSpacing: 2,

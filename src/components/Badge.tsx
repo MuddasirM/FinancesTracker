@@ -36,13 +36,11 @@ export function Badge({ label, variant = 'default', style }: BadgeProps) {
           paddingHorizontal: spacing.sm,
           paddingVertical: 2,
           alignSelf: 'flex-start',
-          // borderRadius: 0 (from theme.borderRadius.sm)
         },
         style,
       ]}>
       <Text
         style={{
-          fontFamily: 'VT323-Regular',
           fontSize: 13,
           color: c,
           letterSpacing: 1.5,

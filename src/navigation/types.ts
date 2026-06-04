@@ -8,9 +8,10 @@ export type TabParamList = {
 };
 
 export type RootStackParamList = {
-  BiometricLock: undefined;
-  Main:          NavigatorScreenParams<TabParamList> | undefined;
-  Settings:      undefined;
+  BiometricLock:    undefined;
+  Main:             NavigatorScreenParams<TabParamList> | undefined;
+  Settings:         undefined;
+  SettingsCategory: { categoryKey: string };
 };
 
 export type RootStackNavProp = NativeStackNavigationProp<RootStackParamList>;

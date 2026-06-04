@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, ScrollView, TouchableOpacity } from 'react-native';
+import { View, ScrollView } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useNavigation } from '@react-navigation/native';
 import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
@@ -7,6 +7,7 @@ import { TabParamList } from '../../navigation/types';
 import { useTheme } from '../../theme/useTheme';
 import { Screen } from '../../components/Screen';
 import { Text } from '../../components/Text';
+import { CategoryRow } from '../../components/CategoryRow';
 
 const FONT = 'VT323-Regular';
 
@@ -15,15 +16,24 @@ const MONTHLY_INCOME   = 5300.00;
 const MONTHLY_EXPENSES = 1401.89;
 const SPENT_PERCENT    = MONTHLY_EXPENSES / MONTHLY_INCOME;
 
+// Each category gets its own distinct terminal-palette color
 const CATEGORIES = [
-  { label: 'Housing',       amount: 1200.00, budget: 1400.00, color: '#9B8EC4', icon: 'home-outline' },
-  { label: 'Food',          amount:   93.90, budget:  200.00, color: '#C4A054', icon: 'cart-outline' },
-  { label: 'Utilities',     amount:   92.00, budget:  150.00, color: '#7A8C9A', icon: 'lightning-bolt-outline' },
+  { label: 'Housing',       amount: 1200.00, budget: 1400.00, color: '#8B7EC8', icon: 'home-outline' },
+  { label: 'Food',          amount:   93.90, budget:  200.00, color: '#C9A87C', icon: 'cart-outline' },
+  { label: 'Utilities',     amount:   92.00, budget:  150.00, color: '#5FA8A0', icon: 'lightning-bolt-outline' },
   { label: 'Subscriptions', amount:   15.99, budget:  100.00, color: '#C47A9A', icon: 'television-play' },
 ];
 
+const BLOCK_FULL  = '█';
+const BLOCK_EMPTY = '░';
+
 function fmt(n: number) {
   return '$' + Math.abs(n).toLocaleString('en-US', { minimumFractionDigits: 2 });
+}
+
+function blockBar(pct: number, total: number): [string, string] {
+  const filled = Math.round(Math.min(pct, 1) * total);
+  return [BLOCK_FULL.repeat(filled), BLOCK_EMPTY.repeat(total - filled)];
 }
 
 function StatsRow() {
@@ -57,58 +67,14 @@ function StatsRow() {
   );
 }
 
-interface CategoryRowProps {
-  icon: string;
-  label: string;
-  value: number;
-  total: number;
-  color: string;
-  onPress?: () => void;
-}
-
-function CategoryRow({ icon, label, value, total, color, onPress }: CategoryRowProps) {
-  const { theme } = useTheme();
-  const { colors, spacing } = theme;
-  const pct = Math.min(value / total, 1);
-  const over = value > total;
-
-  const content = (
-    <View style={{ marginBottom: spacing.lg }}>
-      <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: spacing.xs, gap: spacing.sm }}>
-        <View style={{ width: 32, height: 32, borderRadius: 2, borderWidth: 1, borderColor: color + '40', backgroundColor: color + '12', alignItems: 'center', justifyContent: 'center' }}>
-          <Icon name={icon} size={16} color={color} />
-        </View>
-        <View style={{ flex: 1 }}>
-          <Text style={{ fontFamily: FONT, fontSize: 16, color: colors.text.primary, letterSpacing: 0.5 }}>{label}</Text>
-        </View>
-        <Text style={{ fontFamily: FONT, fontSize: 16, color: over ? colors.status.danger : colors.text.primary, letterSpacing: 0.5 }}>
-          {fmt(value)}
-          <Text style={{ fontFamily: FONT, fontSize: 13, color: colors.text.muted }}> / {fmt(total)}</Text>
-        </Text>
-        {onPress && (
-          <Icon name="chevron-right" size={16} color={colors.text.muted} style={{ marginLeft: 2 }} />
-        )}
-      </View>
-      <View style={{ height: 3, backgroundColor: colors.background.secondary, marginLeft: 44 }}>
-        <View style={{ height: 3, width: `${pct * 100}%`, backgroundColor: over ? colors.status.danger : color }} />
-      </View>
-    </View>
-  );
-
-  if (onPress) {
-    return (
-      <TouchableOpacity activeOpacity={0.6} onPress={onPress}>
-        {content}
-      </TouchableOpacity>
-    );
-  }
-  return content;
-}
 
 export function HomeScreen() {
   const { theme } = useTheme();
   const { colors, spacing } = theme;
   const navigation = useNavigation<BottomTabNavigationProp<TabParamList>>();
+
+  const spentBlocks  = 20;
+  const [spentFill, spentEmpty] = blockBar(SPENT_PERCENT, spentBlocks);
 
   return (
     <Screen edges={['bottom', 'left', 'right']}>
@@ -133,11 +99,12 @@ export function HomeScreen() {
         {/* ── Stats row ── */}
         <StatsRow />
 
-        {/* ── Monthly spend bar ── */}
+        {/* ── Monthly spend bar (block style) ── */}
         <View style={{ paddingHorizontal: spacing.lg, marginTop: spacing.lg }}>
-          <View style={{ height: 3, backgroundColor: colors.background.secondary }}>
-            <View style={{ height: 3, width: `${Math.min(SPENT_PERCENT * 100, 100)}%`, backgroundColor: colors.accent.primary }} />
-          </View>
+          <Text style={{ fontFamily: FONT, fontSize: 15, letterSpacing: 0 }}>
+            <Text style={{ color: colors.accent.primary }}>{spentFill}</Text>
+            <Text style={{ color: colors.text.muted + '55' }}>{spentEmpty}</Text>
+          </Text>
           <Text style={{ fontFamily: FONT, fontSize: 13, color: colors.text.muted, letterSpacing: 1, marginTop: spacing.xs, textTransform: 'uppercase' }}>
             {Math.round(SPENT_PERCENT * 100)}% of income spent
           </Text>

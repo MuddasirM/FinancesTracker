@@ -5,6 +5,7 @@
   "scripts": {
     "start": "react-native start",
     "android": "powershell -ExecutionPolicy Bypass -File .\\dev.ps1",
+    "android:release": "powershell -ExecutionPolicy Bypass -File .\\release.ps1",
     "lint": "eslint .",
     "test": "jest"
   },
@@ -16,6 +17,7 @@
     "react": "19.2.3",
     "react-native": "0.85.3",
     "react-native-gesture-handler": "^3.0.0",
+    "react-native-quick-sqlite": "^8.2.7",
     "react-native-reanimated": "^4.4.0",
     "react-native-safe-area-context": "^5.5.2",
     "react-native-screens": "^4.25.2",

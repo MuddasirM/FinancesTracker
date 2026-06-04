@@ -48,7 +48,6 @@ export function Header({ title, onBack, rightAction, rightElement, borderless = 
         style={{
           flex: 1,
           textAlign: 'center',
-          fontFamily: 'VT323-Regular',
           fontSize: 20,
           color: colors.text.primary,
           letterSpacing: 2,

@@ -108,6 +108,7 @@ export function MainNavigator() {
         activeRoute={activeRoute}
         onNavigate={navigateToTab}
       />
+
     </View>
   );
 }
