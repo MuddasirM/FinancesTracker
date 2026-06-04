@@ -6,7 +6,7 @@ import {
 } from './schema'
 import { CreateCategoryInput } from './types'
 
-const DB_NAME = 'finance_tracker.db'
+const DB_NAME = 'coffer.db'
 
 let db: QuickSQLiteConnection | null = null
 

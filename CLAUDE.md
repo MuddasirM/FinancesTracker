@@ -1,4 +1,4 @@
-# FinanceTracker — Agent Reference
+# Coffer — Agent Reference
 
 > **Keep this file up to date.** Whenever you add a screen, component, change the theme structure, or alter a dev command, update the relevant section here before finishing the task.
 
@@ -80,7 +80,7 @@ border               '#222222'
 typography.fonts.retro  'VT323-Regular'  // apply to all text
 ```
 
-Default theme mode is `'dark'` (set in ThemeContext). User preference is persisted via AsyncStorage key `@ft_theme_preference`. Change default in `ThemeContext.tsx` line with `useState<ThemeMode>('dark')`.
+Default theme mode is `'dark'` (set in ThemeContext). User preference is persisted via AsyncStorage key `@coffer_theme_preference`. Change default in `ThemeContext.tsx` line with `useState<ThemeMode>('dark')`.
 
 **Design language:** retro/terminal aesthetic — sharp corners (`borderRadius` 0–4), 1px visible borders on all cards/inputs, hard offset shadows (`shadowRadius: 0, offset: 3×3`) tinted with the beige accent, VT323 on all text.
 
@@ -88,7 +88,7 @@ Default theme mode is `'dark'` (set in ThemeContext). User preference is persist
 
 ## Database
 
-SQLite via `react-native-quick-sqlite`. DB file: `finance_tracker.db`.
+SQLite via `react-native-quick-sqlite`. DB file: `coffer.db`.
 
 **Init:** call `initDatabase()` once at app startup (e.g. in `App.tsx`) before rendering any screen that uses repositories. It is idempotent — safe to call multiple times.
 

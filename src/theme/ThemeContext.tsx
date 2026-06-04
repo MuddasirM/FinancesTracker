@@ -3,7 +3,7 @@ import { useColorScheme } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { lightTheme, darkTheme, Theme } from './index';
 
-const THEME_KEY = '@ft_theme_preference';
+const THEME_KEY = '@coffer_theme_preference';
 
 export type ThemeMode = 'light' | 'dark' | 'system';
 
